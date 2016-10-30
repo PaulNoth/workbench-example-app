@@ -4,6 +4,8 @@ import org.scalajs.dom
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom.{CanvasRenderingContext2D, html}
 
+import scala.scalajs.js
+
 @JSExport
 object ScalaJSExample {
   @JSExport
@@ -14,18 +16,25 @@ object ScalaJSExample {
     canvas.width = canvas.parentElement.clientWidth
     canvas.height = canvas.parentElement.clientHeight
 
-    renderer.fillStyle = "#f8f8f8"
-    renderer.fillRect(0, 0, canvas.width, canvas.height)
+    val gradient = renderer
+      .createLinearGradient(canvas.width / 2 - 100, 0, canvas.width / 2 + 100, 0)
+    gradient.addColorStop(0, "red")
+    gradient.addColorStop(0.5, "green")
+    gradient.addColorStop(1, "blue")
+    renderer.fillStyle = gradient
 
-    renderer.fillStyle = "black"
-    var down = false
-    canvas.onmousedown = (e: dom.MouseEvent) => down = true
-    canvas.onmouseup = (e: dom.MouseEvent) => down = false
-    canvas.onmousemove = (e: dom.MouseEvent) => {
-      val rect = canvas.getBoundingClientRect()
-      if(down) {
-        renderer.fillRect(e.clientX - rect.left, e.clientY - rect.top, 10, 10)
-      }
+    renderer.textAlign = "center"
+    renderer.textBaseline = "middle"
+
+    def render() = {
+      renderer.clearRect(0, 0, canvas.width, canvas.height)
+      val date = new js.Date
+      renderer.font = "75px sans-serif"
+
+      val time = Seq(date.getHours(), date.getMinutes(), date.getSeconds()).mkString(":")
+      renderer.fillText(time, canvas.width / 2, canvas.height / 2)
     }
+
+    dom.setInterval(render _, 1000)
   }
 }
