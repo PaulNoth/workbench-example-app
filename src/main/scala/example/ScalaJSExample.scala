@@ -13,20 +13,25 @@ case class Point(x: Int, y: Int){
 object ScalaJSExample {
   @JSExport
   def main(canvas: html.Canvas): Unit = {
+    val windowWidth = dom.window.innerWidth
+    val windowHeight = dom.window.innerHeight
+    canvas.height = windowHeight
+    canvas.width = windowWidth
     val ctx = canvas.getContext("2d")
                     .asInstanceOf[dom.CanvasRenderingContext2D]
 
     var count = 0
     var p = Point(0, 0)
-    val corners = Seq(Point(255, 255), Point(0, 255), Point(128, 0))
+    val corners = Seq(Point(windowWidth, windowHeight),
+      Point(0, windowHeight), Point(windowWidth / 2, 0))
 
     def clear() = {
       ctx.fillStyle = "black"
-      ctx.fillRect(0, 0, 255, 255)
+      ctx.fillRect(0, 0, windowWidth, windowHeight)
     }
 
     def run = for (i <- 0 until 10){
-      if (count % 3000 == 0) clear()
+      if (count % 9000 == 0) clear()
       count += 1
       p = (p + corners(Random.nextInt(3))) / 2
 
